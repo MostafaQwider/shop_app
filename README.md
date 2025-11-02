@@ -82,10 +82,12 @@ flutter pub get
 flutter run
 ```
 🔐 Authentication Notes
+
 A verification code is sent via email during registration.
 Supports password reset and change easily.
 
 🌐 Supported Languages
+
 English (en)
 
 Arabic (ar)
