@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+import '../../../domain/entities/payment_config_entity.dart';
+import '../../../domain/use_cases/orders/update_orders_usecase.dart';
+import '../../../domain/use_cases/payment/payment_config_usecase.dart';
 import '../../../core/constants/enums.dart';
 import '../../../domain/entities/cart_item_entity.dart';
 import '../../../domain/entities/order_items_entity.dart';
@@ -13,9 +16,15 @@ import '../../component/app_snack_bar.dart';
 class CheckoutController extends GetxController {
   GetAddressUseCase getAddressUseCase;
   AddOrderUseCase addOrderUseCase;
+  UpdateOrderUseCase updateOrderUseCase;
   ClearCartUseCase clearCartUseCase ;
+  PaymentConfigUseCase paymentConfigUseCase;
 
-  CheckoutController(this.getAddressUseCase, this.addOrderUseCase,this.clearCartUseCase);
+  CheckoutController(this.getAddressUseCase,
+      this.addOrderUseCase,
+      this.updateOrderUseCase,
+      this.clearCartUseCase,
+      this.paymentConfigUseCase);
 
   /// المتغيرات
   int addressCheckID = 0;
@@ -24,25 +33,36 @@ class CheckoutController extends GetxController {
   List<CartItemEntity> cartItems = [];
   double subTotal = 0.0;
   StatusRequest statusRequest = StatusRequest.loading;
-
+  late PaymentConfigEntity paymentConfigEntity;
   @override
   void onInit() async {
     super.onInit();
     products = Get.arguments['product'];
     cartItems = Get.arguments['cartItems'];
     subTotal = Get.arguments['subTotal'];
-
-    await getSavedAddress();
+    await loadData();
+    statusRequest = StatusRequest.initial;
+    update();
   }
+  Future<void>loadData()async{
+     getSavedAddress();
 
+
+  }
   /// الحصول على العناوين المحفوظة
   Future<void> getSavedAddress() async {
     address.clear();
     final result = await getAddressUseCase();
     result.fold((error) => null, (data) => address.addAll(data.data!));
     addressCheckID = address.first.id!;
-    statusRequest = StatusRequest.initial;
-    update();
+
+  }
+
+  /// الحصول على العناوين المحفوظة
+  Future<void> getPaymentConfig() async {
+    address.clear();
+    final result = await paymentConfigUseCase();
+    result.fold((error) => null, (data) =>paymentConfigEntity=data.data);
   }
 
   void setAddress(int i) {
@@ -88,9 +108,15 @@ class CheckoutController extends GetxController {
     final order = OrdersEntity(
         total: getPriceTotal(), address_id: addressCheckID, items: items);
     final result = await addOrderUseCase(order);
-    await clearCartUseCase();
     result.fold((error) => showToastMessage(label: "", text: error),
-        (data) => showToastMessage(label: "", text: data.message!));
+        (data) async{ showToastMessage(label: "", text: data.message!);
+       if(data.status==StatusRequest.success){
+         await clearCartUseCase();
+         //payment
+         //update order
+
+       }
+    });
     statusRequest = StatusRequest.initial;
     update();
   }
