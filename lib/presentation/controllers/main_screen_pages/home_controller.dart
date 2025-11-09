@@ -80,7 +80,8 @@ class HomeController extends GetxController {
 
     favoriteProductIds = favoritesResult.map((f) => f.productId).toList();
 
-    statusRequest = hasError ? StatusRequest.loading : StatusRequest.success;
+    statusRequest = hasError ? StatusRequest.failure : StatusRequest.success;
+    statusRequest =filteredProducts.isEmpty?StatusRequest.nodata:StatusRequest.initial;
     update();
   }
 

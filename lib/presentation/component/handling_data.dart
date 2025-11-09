@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-
 import '../../core/constants/assets_manager.dart';
 import '../../core/constants/enums.dart';
+import '../component/app_button.dart'; // ✅ لاستخدام الزر AppButton
 
-/// Widget يستخدم لإدارة حالات البيانات (loading, error, success...)
+/// Widget يستخدم لإدارة حالات البيانات (loading, error, success...).
 class HandlingData extends StatelessWidget {
   final StatusRequest statusRequest;
   final Widget child;
   final bool showLoading;
   final Widget? loadingWidget;
+  final VoidCallback? onTryAgain; // ✅ متحول جديد للزر
 
   const HandlingData({
     super.key,
@@ -18,13 +19,14 @@ class HandlingData extends StatelessWidget {
     required this.child,
     this.showLoading = true,
     this.loadingWidget,
+    this.onTryAgain, // ✅ إضافته هنا
   });
 
   @override
   Widget build(BuildContext context) {
     final double size = Get.width * 0.5;
 
-    // 🧭 خريطة لكل حالة مع ملف Lottie المناسب
+    // 🧭 خريطة الحالات والأنيميشن
     final Map<StatusRequest, String> lottieAssets = {
       StatusRequest.offline: AssetsManager.offline,
       StatusRequest.failure: AssetsManager.server,
@@ -45,7 +47,6 @@ class HandlingData extends StatelessWidget {
       case StatusRequest.failure:
       case StatusRequest.serverError:
       case StatusRequest.exception:
-      case StatusRequest.nodata:
         final lottiePath =
             lottieAssets[statusRequest] ?? AssetsManager.server;
         return _buildErrorWidget(
@@ -53,6 +54,18 @@ class HandlingData extends StatelessWidget {
           lottiePath,
           statusRequest.message,
           size,
+          showRetry: true, // ✅ عرض الزر
+        );
+
+      case StatusRequest.nodata:
+        final lottiePath =
+            lottieAssets[statusRequest] ?? AssetsManager.noData;
+        return _buildErrorWidget(
+          context,
+          lottiePath,
+          statusRequest.message,
+          size,
+          showRetry: false, // ❌ بدون زر في حالة no data
         );
 
       case StatusRequest.success:
@@ -60,14 +73,18 @@ class HandlingData extends StatelessWidget {
         return child;
 
       default:
-      // fallback في حال حالة غير معروفة
         return const SizedBox.shrink();
     }
   }
 
-  /// 🔹 ويدجت الخطأ / الحالات الخاصة
+  /// 🔹 ويدجت عرض الخطأ مع خيار "Try Again"
   Widget _buildErrorWidget(
-      BuildContext context, String lottieAssets, String message, double size) {
+      BuildContext context,
+      String lottieAssets,
+      String message,
+      double size, {
+        required bool showRetry,
+      }) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -79,6 +96,17 @@ class HandlingData extends StatelessWidget {
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
+          if (showRetry) ...[
+            const SizedBox(height: 20),
+            AppButton(
+              text: "Try Again",
+              onPressed: onTryAgain ??
+                      () {
+                    // fallback لو ما تم تمرير دالة
+                    Get.snackbar("تنبيه", "لم يتم تمرير دالة المحاولة مرة أخرى");
+                  },
+            ),
+          ],
         ],
       ),
     );

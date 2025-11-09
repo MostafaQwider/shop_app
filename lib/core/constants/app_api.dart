@@ -1,10 +1,10 @@
 class AppApi {
   static const String imageUrl =
-      "base_url/uploads/";
+      "https://shopbackend-production-132c.up.railway.app/uploads/";
 
   static const String server =
-      'base_url/api/v1';
-
+      'https://shopbackend-production-132c.up.railway.app/api/v1';
+//https://shopbackend-production-132c.up.railway.app
 // ================================= AUTH ========================== //
 
   static const String signup = "auth/register";

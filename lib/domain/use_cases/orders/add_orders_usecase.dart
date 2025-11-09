@@ -9,7 +9,7 @@ class AddOrderUseCase {
 
   AddOrderUseCase(this.repository);
 
-  Future<Either<String, ApiResponse>> call(
+  Future<Either<String, ApiResponse<int>>> call(
       OrdersEntity item) async {
     try {
       return Right(await repository.addOrder(item));

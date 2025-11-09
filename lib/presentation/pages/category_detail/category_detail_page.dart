@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import '../../../core/constants/colors.dart';
 import '../../component/handling_data.dart';
 import '../../controllers/category_detail/category_detail_controller.dart';
 import '../../routes/app_routes.dart';
@@ -17,33 +19,33 @@ class CategoryDetailPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(controller.categoryName),
+        surfaceTintColor: AppColor.white,
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: GetBuilder<CategoryDetailController>(
-            builder: (controller) => HandlingData(
-              statusRequest: controller.statusRequest,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 🔍 Search Field
-                  CustomSearchBar(controller: controller),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 🔍 Search Field
+              CustomSearchBar(controller: controller),
 
-                  const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                  // 🧢 Categories
-                  SubCategoryChips(),
+              // 🧢 Categories
+              GetBuilder<CategoryDetailController>(builder: (_) =>  SubCategoryChips()),
 
-                  const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                  // 🛍️ Products Grid
-                  Expanded(
+              // 🛍️ Products Grid
+              Expanded(
+                child: GetBuilder<CategoryDetailController>(
+                  builder: (controller) => HandlingData(
+                    statusRequest: controller.statusRequest,
                     child: GridView.builder(
                       padding: const EdgeInsets.only(top: 5),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 15,
                         crossAxisSpacing: 15,
@@ -63,9 +65,10 @@ class CategoryDetailPage extends StatelessWidget {
                       },
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              )
+
+            ],
           ),
         ),
       ),

@@ -61,6 +61,8 @@ class FavoriteController extends GetxController {
     applyFavoritesFilter();
 
     statusRequest = StatusRequest.success;
+    statusRequest =filteredProducts.isEmpty?StatusRequest.nodata:StatusRequest.initial;
+
     update();
   }
 
@@ -102,6 +104,7 @@ class FavoriteController extends GetxController {
 
     applyFavoritesFilter();
     filterProducts();
+    statusRequest=filteredProducts.isEmpty?StatusRequest.nodata:StatusRequest.initial;
     update();
   }
 

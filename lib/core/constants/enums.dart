@@ -42,7 +42,7 @@ extension StatusRequestExtension on StatusRequest {
       case StatusRequest.exception:
         return AppStrings.serverError.tr;
       case StatusRequest.nodata:
-        return AppStrings.serverError.tr;
+        return AppStrings.noData.tr;
       default:
         return "";
     }

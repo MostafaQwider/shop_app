@@ -10,13 +10,14 @@ class OrderRepositoryImpl implements OrderRepository {
   OrderRepositoryImpl(this.remoteDataSource); // Constructor لاستقباله
 
   @override
-  Future<ApiResponse> addOrder(OrdersEntity item) async {
+  Future<ApiResponse<int>> addOrder(OrdersEntity item) async {
     final model = OrdersModel.fromEntity(item);
     final responseModel = await remoteDataSource.addOrder(model);
 
     return ApiResponse(
       status: responseModel.status,
       message: responseModel.message,
+      data: responseModel.data,
     );
   }
 

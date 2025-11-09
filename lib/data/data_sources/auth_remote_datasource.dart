@@ -48,13 +48,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         {'email': email, 'password': password},
       );
 
-      if (decodedJson is Map<String, dynamic>) {
-        String token = decodedJson['data']['token'] ?? "";
-        bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
-        await _storageService.write(key: "is_verified", value: isVerified);
-        await _storageService.write(key: 'token', value: token);
-        await _storageService.write(key: 'isLoggedIn', value: decodedJson['success']);
-        await _storageService.write(key: 'email', value: decodedJson['data']['user']['email']);
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+
+          String token = decodedJson['data']['token'] ?? "";
+          bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
+          await _storageService.write(key: "is_verified", value: isVerified);
+          await _storageService.write(key: 'token', value: token);
+          await _storageService.write(
+              key: 'isLoggedIn', value: decodedJson['success']);
+          await _storageService.write(
+              key: 'email', value: decodedJson['data']['user']['email']);
 
         return ApiResponse<AuthResponseModel>(
           status: decodedJson['success'] == true
@@ -65,8 +68,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               ? AuthResponseModel.fromJson(decodedJson['data'])
               : null,
         );
+
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
@@ -78,11 +82,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final decodedJson = await _apiService.post(AppApi.signup, user.toJson());
 
-      if (decodedJson is Map<String, dynamic>) {
-        bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
-        await _storageService.write(key: "is_verified", value: isVerified);
-        await _storageService.write(key: 'isLoggedIn', value: decodedJson['success']);
-        await _storageService.write(key: 'email', value: decodedJson['data']['user']['email']);
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+          bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
+          await _storageService.write(key: "is_verified", value: isVerified);
+          await _storageService.write(
+              key: 'isLoggedIn', value: decodedJson['success']);
+          await _storageService.write(
+              key: 'email', value: decodedJson['data']['user']['email']);
+
 
         return ApiResponse<UsersModel>(
           status: decodedJson['success'] == true
@@ -94,7 +101,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               : null,
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
@@ -110,11 +117,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         {'email': email, 'code': code},
       );
 
-      if (decodedJson is Map<String, dynamic>) {
-        String token = decodedJson['data']['token'] ?? "";
-        await _storageService.write(key: 'token', value: token);
-        bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
-        await _storageService.write(key: "is_verified", value: isVerified);
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+          String token = decodedJson['data']['token'] ?? "";
+          await _storageService.write(key: 'token', value: token);
+          bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
+          await _storageService.write(key: "is_verified", value: isVerified);
+
         return ApiResponse<AuthResponseModel>(
           status: decodedJson['success'] == true
               ? StatusRequest.success
@@ -125,7 +133,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               : null,
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
@@ -211,7 +219,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final decodedJson = await _apiService.get(AppApi.profile);
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
         return ApiResponse<UsersModel>(
           status: decodedJson['success'] == true
               ? StatusRequest.success
@@ -222,7 +230,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               : null,
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
@@ -259,7 +267,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _storageService.remove(key: 'token');
       return ApiResponse<String>(
         status: StatusRequest.success,
-        message: 'Logged out successfully',
+        message:"Logged out successfully".tr,
         data: '',
       );
     } catch (e) {
@@ -275,14 +283,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         AppApi.verifyResetCode,
         {'email': email, 'code': code},
       );
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
         return ApiResponse(
             status: decodedJson['success'] == true
                 ? StatusRequest.success
                 : StatusRequest.failure,
             message: decodedJson['message'].toString().tr);
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;

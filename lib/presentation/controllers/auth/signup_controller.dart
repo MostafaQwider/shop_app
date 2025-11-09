@@ -44,12 +44,9 @@ class SignupController extends GetxController {
 
     result.fold(
       (error) {
-        statusRequest = StatusRequest.initial;
-        update();
         showToastMessage(text: error, label: '');
       },
       (user) {
-        statusRequest = StatusRequest.initial;
         showToastMessage(
             text: user.message ?? "user signup successfully", label: '');
         if(user.status==StatusRequest.success){
@@ -58,9 +55,9 @@ class SignupController extends GetxController {
             "email":emailController.text.trim()
           });
         }
-        update();
       },
     );
+    update();
   }
 
   @override

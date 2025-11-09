@@ -33,7 +33,7 @@ class HomeRemoteDateSourceImpl implements HomeRemoteDateSource {
       );
       _storageService.write(key: "categories", value: jsonEncode(decodedJson));
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic> && decodedJson['success']) {
         final List dataList = decodedJson['data'] ?? [];
         return ApiResponse<List<AllCategoryModel>>(
           status: decodedJson['success'] == true
@@ -44,7 +44,7 @@ class HomeRemoteDateSourceImpl implements HomeRemoteDateSource {
               dataList.map((json) => AllCategoryModel.fromJson(json)).toList(),
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
@@ -62,10 +62,10 @@ class HomeRemoteDateSourceImpl implements HomeRemoteDateSource {
         AppApi.products,
         queryParams: {'lang': lang},
       );
-      _storageService.write(key: "products", value: jsonEncode(decodedJson));
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic> && decodedJson['success']) {
         final List dataList = decodedJson['data'] ?? [];
+        _storageService.write(key: "products", value: jsonEncode(decodedJson));
 
         return ApiResponse<List<ProductModel>>(
           status: decodedJson['success'] == true
@@ -75,7 +75,7 @@ class HomeRemoteDateSourceImpl implements HomeRemoteDateSource {
           data: dataList.map((json) => ProductModel.fromJson(json)).toList(),
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;

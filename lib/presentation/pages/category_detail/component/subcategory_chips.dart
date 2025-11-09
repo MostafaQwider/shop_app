@@ -23,16 +23,15 @@ class SubCategoryChips extends StatelessWidget {
         itemCount: controller.subcategories.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final isSelected = controller.selectedSubcategoryId == controller.subcategories[index].id;
           return ChoiceChip(
             label: Text(controller.subcategories[index].name),
-            selected: isSelected,
+            selected: controller.selectedSubcategoryId == controller.subcategories[index].id,
             onSelected: (_) => controller.selectSubcategory(controller.subcategories[index].id),
             backgroundColor: cardColor,
             selectedColor: primaryColor,
             checkmarkColor: Theme.of(context).colorScheme.surface,
             labelStyle: TextStyle(
-              color: isSelected ? cardColor : textColor,
+              color: controller.selectedSubcategoryId == controller.subcategories[index].id ? cardColor : textColor,
             ),
             side: BorderSide.none,
           );

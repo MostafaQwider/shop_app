@@ -27,7 +27,7 @@ class AddressRemoteDataSourceImpl implements AddressRemoteDataSource {
         item.toJson(),
       );
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
         final dataJson = decodedJson['data'];
         final address = dataJson != null
             ? AddressModel.fromJson(dataJson)
@@ -41,7 +41,7 @@ class AddressRemoteDataSourceImpl implements AddressRemoteDataSource {
           data: address,
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
@@ -92,7 +92,7 @@ class AddressRemoteDataSourceImpl implements AddressRemoteDataSource {
     try {
       final decodedJson = await _apiService.get(AppApi.addressForUser);
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
         final List dataList = decodedJson['data'] ?? [];
         _storageService.write(key: "addresses", value: jsonEncode(decodedJson));
 
@@ -104,7 +104,7 @@ class AddressRemoteDataSourceImpl implements AddressRemoteDataSource {
           data: dataList.map((json) => AddressModel.fromJson(json)).toList(),
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;

@@ -21,6 +21,7 @@ class HomePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: GetBuilder<HomeController>(
             builder: (controller) => HandlingData(
+              onTryAgain: controller.loadData,
               statusRequest: controller.statusRequest,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

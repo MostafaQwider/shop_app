@@ -1,32 +1,35 @@
 import 'package:get/get.dart';
-import '../../../domain/entities/payment_config_entity.dart';
-import '../../../domain/use_cases/orders/update_orders_usecase.dart';
-import '../../../domain/use_cases/payment/payment_config_usecase.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/constants/strings.dart';
 import '../../../domain/entities/cart_item_entity.dart';
 import '../../../domain/entities/order_items_entity.dart';
 import '../../../domain/entities/orders_entity.dart';
 import '../../../domain/entities/products_entity.dart';
-import '../../../domain/use_cases/address/get_address_usecase.dart';
 import '../../../domain/entities/address_entity.dart';
+import '../../../domain/entities/payment_config_entity.dart';
+import '../../../domain/use_cases/address/get_address_usecase.dart';
 import '../../../domain/use_cases/cart/clear_cart_usecase.dart';
 import '../../../domain/use_cases/orders/add_orders_usecase.dart';
+import '../../../domain/use_cases/orders/update_orders_usecase.dart';
+import '../../../domain/use_cases/payment/payment_config_usecase.dart';
 import '../../component/app_snack_bar.dart';
+import '../../routes/app_routes.dart';
 
 class CheckoutController extends GetxController {
-  GetAddressUseCase getAddressUseCase;
-  AddOrderUseCase addOrderUseCase;
-  UpdateOrderUseCase updateOrderUseCase;
-  ClearCartUseCase clearCartUseCase ;
-  PaymentConfigUseCase paymentConfigUseCase;
+  final GetAddressUseCase getAddressUseCase;
+  final AddOrderUseCase addOrderUseCase;
+  final UpdateOrderUseCase updateOrderUseCase;
+  final ClearCartUseCase clearCartUseCase;
+  final PaymentConfigUseCase paymentConfigUseCase;
 
-  CheckoutController(this.getAddressUseCase,
+  CheckoutController(
+      this.getAddressUseCase,
       this.addOrderUseCase,
       this.updateOrderUseCase,
       this.clearCartUseCase,
-      this.paymentConfigUseCase);
+      this.paymentConfigUseCase,
+      );
 
-  /// المتغيرات
   int addressCheckID = 0;
   List<AddressEntity> address = [];
   List<ProductEntity> products = [];
@@ -34,6 +37,7 @@ class CheckoutController extends GetxController {
   double subTotal = 0.0;
   StatusRequest statusRequest = StatusRequest.loading;
   late PaymentConfigEntity paymentConfigEntity;
+
   @override
   void onInit() async {
     super.onInit();
@@ -44,79 +48,116 @@ class CheckoutController extends GetxController {
     statusRequest = StatusRequest.initial;
     update();
   }
-  Future<void>loadData()async{
-     getSavedAddress();
 
-
+  Future<void> loadData() async {
+    await getSavedAddress();
+    await getPaymentConfig();
   }
-  /// الحصول على العناوين المحفوظة
+
   Future<void> getSavedAddress() async {
     address.clear();
     final result = await getAddressUseCase();
     result.fold((error) => null, (data) => address.addAll(data.data!));
-    addressCheckID = address.first.id!;
-
+    if (address.isNotEmpty) {
+      addressCheckID = address.first.id!;
+    }
   }
 
-  /// الحصول على العناوين المحفوظة
   Future<void> getPaymentConfig() async {
-    address.clear();
     final result = await paymentConfigUseCase();
-    result.fold((error) => null, (data) =>paymentConfigEntity=data.data);
+    result.fold((error) => null, (data) => paymentConfigEntity = data.data);
   }
 
   void setAddress(int i) {
-    addressCheckID == i ? 0 : addressCheckID = i;
+    addressCheckID = i;
     update();
   }
 
   bool isSelectedAddress(int id) => id == addressCheckID;
 
-  /// تكلفة التوصيل
   double get deliveryFee => 3.00;
-
-  /// قيمة الضريبة أو الرسوم
   double get fax => 2.120;
 
-  /// حساب السعر الكلي النهائي
   double getPriceTotal() {
     return deliveryFee + (subTotal + fax);
   }
 
   int getQuantity(ProductEntity p) {
     return cartItems
-        .firstWhere((e) =>
-            e.colorId == p.variants.first.color.id &&
-            e.sizeId == p.variants.first.size.id &&
-            e.productId == p.id)
+        .firstWhere(
+          (e) =>
+      e.colorId == p.variants.first.color.id &&
+          e.sizeId == p.variants.first.size.id &&
+          e.productId == p.id,
+    )
         .quantity;
   }
 
+  /// إنشاء الطلب وتنفيذ الدفع
   Future<void> addOrder() async {
     statusRequest = StatusRequest.loading;
     update();
+
     final items = cartItems
         .map((e) => OrderItemsEntity(
-            color_id: e.colorId,
-            product_id: e.productId,
-            size_id: e.sizeId,
-            quantity: e.quantity,
-            price: products
-                .firstWhere((element) => element.id == e.productId)
-                .basePrice))
+      color_id: e.colorId,
+      product_id: e.productId,
+      size_id: e.sizeId,
+      quantity: e.quantity,
+      price: products
+          .firstWhere((element) => element.id == e.productId)
+          .basePrice,
+    ))
         .toList();
-    final order = OrdersEntity(
-        total: getPriceTotal(), address_id: addressCheckID, items: items);
-    final result = await addOrderUseCase(order);
-    result.fold((error) => showToastMessage(label: "", text: error),
-        (data) async{ showToastMessage(label: "", text: data.message!);
-       if(data.status==StatusRequest.success){
-         await clearCartUseCase();
-         //payment
-         //update order
 
-       }
-    });
+    final order = OrdersEntity(
+      total: getPriceTotal(),
+      address_id: addressCheckID,
+      items: items,
+    );
+
+    final result = await addOrderUseCase(order);
+
+    result.fold(
+          (error) => showToastMessage(label: '', text: error),
+          (data) async {
+        showToastMessage(label: "", text: data.message!);
+
+        if (data.status == StatusRequest.success) {
+          final orderId = data.data!;
+           await clearCartUseCase();
+
+          /// تنفيذ عملية الدفع مباشرة بدون زر
+          final paymentResult = await Get.toNamed(AppRoutes.paymentRoute);
+
+          // التحقق من نتيجة الدفع وتحديث الطلب
+          if (paymentResult != null && paymentResult['status'] == 'success') {
+            final transactionId = paymentResult['transactionId'];
+            final updatedOrder = OrdersEntity(
+              id: orderId,
+              address_id: addressCheckID,
+              total: getPriceTotal(),
+              items: items,
+              payment_method: "paypal",
+              payment_transaction_id: transactionId,
+              status: "paid",
+            );
+
+            final updateResult = await updateOrderUseCase(updatedOrder);
+            updateResult.fold(
+                  (error) => showToastMessage(label: "", text: error),
+                  (res) => showToastMessage(
+                  label: "", text: AppStrings.paymantSuccessfully.tr),
+            );
+          } else {
+            showToastMessage(
+                label: "Payment Failed",
+                text: "Payment was cancelled or failed.");
+          }
+        }
+      },
+    );
+
     statusRequest = StatusRequest.initial;
     update();
   }

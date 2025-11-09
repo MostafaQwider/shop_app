@@ -61,7 +61,7 @@ class ApiService {
         Uri uri = Uri.parse('${customBaseUrl ?? _baseUrl}/$endpoint');
         if (queryParams != null) {
           final params =
-              queryParams.map((key, value) => MapEntry(key, value.toString()));
+          queryParams.map((key, value) => MapEntry(key, value.toString()));
           uri = uri.replace(queryParameters: params);
         }
 
@@ -80,7 +80,7 @@ class ApiService {
           switch (method.toUpperCase()) {
             case 'GET':
               response =
-                  await _client.get(uri, headers: headers).timeout(_timeout);
+              await _client.get(uri, headers: headers).timeout(_timeout);
               break;
             case 'POST':
               response = await _client
@@ -94,7 +94,7 @@ class ApiService {
               break;
             case 'DELETE':
               response =
-                  await _client.delete(uri, headers: headers).timeout(_timeout);
+              await _client.delete(uri, headers: headers).timeout(_timeout);
               break;
             default:
               throw Exception('Unsupported HTTP method: $method');
@@ -103,15 +103,24 @@ class ApiService {
 
         return _handleResponse(response);
       } catch (e) {
-        rethrow;
+        if (attempts >= retryCount) {
+          return {
+            "status": "failure",
+            "message": "Request failed after $retryCount attempts",
+            "error": e.toString(),
+          };
+        }
+        // انتظر قبل إعادة المحاولة
+        await Future.delayed(retryDelay);
       }
     }
-
+    // لن يصل هنا عادة
     return {
       "status": "failure",
       "message": "Request failed after $retryCount attempts"
     };
   }
+
 
   Future<dynamic> get(String endpoint, {Map<String, dynamic>? queryParams}) =>
       sendRequest(method: 'GET', endpoint: endpoint, queryParams: queryParams);

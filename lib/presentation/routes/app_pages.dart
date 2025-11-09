@@ -22,6 +22,7 @@ import '../pages/auth/splash_page.dart';
 import '../pages/auth/verify_code_page.dart';
 import '../pages/category_detail/category_detail_page.dart';
 import '../pages/checkout/checkout_page.dart';
+import '../pages/checkout/payment_page.dart';
 import '../pages/detail/detail_page.dart';
 import '../pages/main_screen.dart';
 import '../pages/onboarding/on_boarding_screen.dart';
@@ -92,5 +93,9 @@ class AppPages {
         name: AppRoutes.resetPasswordRoute,
         page: () => const ResetPasswordPage(),
         binding: ResetPasswordBinding()),
+    GetPage(
+        name: AppRoutes.paymentRoute,
+        page: () => const PaymentPage(),
+        binding: CheckOutBinding()),
   ];
 }

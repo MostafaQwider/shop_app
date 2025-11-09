@@ -49,7 +49,7 @@ class OrderController extends GetxController {
   List<OrdersEntity> filteredOrder = [];
   List<ProductEntity> products = [];
   List<AddressEntity> address = [];
-
+  bool hasError=false;
   // 🔹 خريطة تربط كل حالة بالمفتاح المقابل في AppStrings
   final Map<String, String> statusKeyMap = {
     'pending': AppStrings.pending,
@@ -81,9 +81,9 @@ class OrderController extends GetxController {
     final orderResult = await orderUseCase();
     final addressResult = await getAddressUseCase();
 
-    productResult.fold((l) => null, (r) => products.addAll(r.data ?? []));
-    orderResult.fold((l) => null, (r) => orders.addAll(r.data ?? []));
-    addressResult.fold((l) => null, (r) => address.addAll(r.data ?? []));
+    productResult.fold((l) => hasError=true, (r) => products.addAll(r.data ?? []));
+    orderResult.fold((l) => hasError=true, (r) => orders.addAll(r.data ?? []));
+    addressResult.fold((l) => hasError=true, (r) => address.addAll(r.data ?? []));
 
     filteredOrder = List.from(orders);
     checkData();
@@ -103,7 +103,9 @@ class OrderController extends GetxController {
       filterOrder();
     }
 
-    statusRequest = StatusRequest.initial;
+    statusRequest = hasError?StatusRequest.failure:filteredOrder.isEmpty?
+    StatusRequest.nodata:StatusRequest.initial;
+
     update();
   }
 

@@ -35,7 +35,7 @@ class CheckoutPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: AppButton( text: 'payment',onPressed: () => controller.addOrder(),),
+                      child: AppButton( text: AppStrings.checkout.tr,onPressed: () => controller.addOrder(),),
                     ),
                     const SizedBox(height: 20),
                   ],

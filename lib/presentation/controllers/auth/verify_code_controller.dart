@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/enums.dart';
 import '../../../core/constants/strings.dart';
+import '../../../domain/use_cases/auth/send_reset_code_usecase.dart';
+import '../../../domain/use_cases/auth/send_verify_code_usecase.dart';
 import '../../../domain/use_cases/auth/verify_account_usecase.dart';
 import '../../../domain/use_cases/auth/verify_reset_code_usecase.dart';
 import '../../component/app_snack_bar.dart';
@@ -11,8 +13,11 @@ import '../../routes/app_routes.dart';
 class VerifyCodeController extends GetxController {
   VerifyAccountUseCase verifyAccountUseCase;
   VerifyResetCodeUseCase verifyResetCodeUseCase;
+  SendResetCodeUseCase sendResetCodeUseCase;
+  SendVerifyCodeUseCase sendVerifyCodeUseCase;
 
-  VerifyCodeController(this.verifyResetCodeUseCase, this.verifyAccountUseCase);
+  VerifyCodeController(this.verifyResetCodeUseCase, this.verifyAccountUseCase,
+      this.sendVerifyCodeUseCase,this.sendResetCodeUseCase);
 
   final formKey = GlobalKey<FormState>();
 

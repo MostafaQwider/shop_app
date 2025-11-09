@@ -10,7 +10,7 @@ import '../../core/constants/enums.dart'; // لاستخدام StatusRequest
 import '../../core/constants/app_api.dart'; // لاستخدام مسارات الـ API
 
 abstract class OrderRemoteDataSource {
-  Future<ApiResponse> addOrder(OrdersModel model);
+  Future<ApiResponse<int>> addOrder(OrdersModel model);
   Future<ApiResponse> updateOrder(OrdersModel model);
   Future<ApiResponse> removeOrder(OrdersModel model);
   Future<ApiResponse<List<OrdersModel>>> getOrders(); // لا تتوقع model كـ parameter هنا
@@ -21,7 +21,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   final StorageService _storageService = StorageService();
 
   @override
-  Future<ApiResponse> addOrder(OrdersModel model) async {
+  Future<ApiResponse<int>> addOrder(OrdersModel model) async {
     try {
       print(model.entity.address_id);
       final decodedJson = await _apiService.post(
@@ -29,7 +29,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         model.toJson(),
       );
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
 
 
         return ApiResponse(
@@ -37,9 +37,10 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
               ? StatusRequest.success
               : StatusRequest.failure,
           message: decodedJson['message'].toString().tr,
+          data: int.parse(decodedJson['data']['id']["orderId"].toString()),
         );
       } else {
-        throw Exception("Invalid response format for addOrder");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
@@ -62,6 +63,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         message: decodedJson['message'].toString().tr,
       );
     } catch (e) {
+      print(e.toString());
       rethrow;
     }
   }
@@ -90,7 +92,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
     try {
       final decodedJson = await _apiService.get(AppApi.orderForUser); // افترض وجود AppApi.getOrders
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
         final List dataList = decodedJson['data'] ?? [];
         // اختياري: تخزين الأوامر في التخزين المحلي، كما حدث مع العناوين
         _storageService.write(key: "orders", value: jsonEncode(decodedJson));
@@ -102,7 +104,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
           data: dataList.map((json) => OrdersModel.fromJson(json)).toList(),
         );
       } else {
-        throw Exception("Invalid response format for getOrders");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       print(e.toString());

@@ -21,6 +21,7 @@ class OrderPage extends StatelessWidget {
               color: Theme.of(context).primaryColor,
               onRefresh: () => controller.loadData(),
               child: HandlingData(
+                  onTryAgain: controller.loadData,
                   statusRequest: controller.statusRequest,
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(),

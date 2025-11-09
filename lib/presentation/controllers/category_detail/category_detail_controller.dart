@@ -40,21 +40,41 @@ class CategoryDetailController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // 📦 استقبال البيانات من الصفحة السابقة
+    // أولاً، عيّن الحالة Loading
+    statusRequest = StatusRequest.loading;
+    update(); // 👈 حتى تعرض الواجهة اللودينغ فورًا
+
+    // استقبال البيانات من الصفحة السابقة
     final args = Get.arguments;
     allProducts = args["products"] ?? [];
     subcategories = args["subcategories"] ?? [];
     categoryName = args["name"] ?? '';
 
-    filteredProducts = List.from(allProducts);
-    checkData();
-    loadFavorites();
+    // الصنف الافتراضي
+    selectedSubcategoryId = subcategories.isNotEmpty ? subcategories[0].id : -1;
 
-    // ⌛ تأخير بسيط لتصفية البحث
+    // تعبئة المنتجات المبدئية
+    filteredProducts = List.from(allProducts);
+
+    // تأخير بسيط لضمان أن الواجهة تبني أولاً ثم يتم تحديث الحالة
+    Future.delayed(Duration(milliseconds: 100), () async {
+      await loadFavorites();
+
+      if (filteredProducts.isEmpty) {
+        statusRequest = StatusRequest.nodata;
+      } else {
+        statusRequest = StatusRequest.initial;
+      }
+
+      update(); // 👈 هذا هو التحديث الذي يجعل حالة no data تظهر فعلاً
+    });
+
+    // listener للبحث
     searchController.addListener(() {
       Future.delayed(const Duration(milliseconds: 300), filterProducts);
     });
   }
+
 
   /// 🧠 تحميل المفضلات
   Future<void> loadFavorites() async {
@@ -108,8 +128,11 @@ class CategoryDetailController extends GetxController {
     update();
   }
   void checkData(){
-    if(filteredProducts.isEmpty)
-      statusRequest=StatusRequest.nodata;
+    if(filteredProducts.isEmpty) {
+      statusRequest = StatusRequest.nodata;
+    } else {
+      statusRequest = StatusRequest.initial;
+    }
   }
   /// 🧩 عند اختيار صنف فرعي جديد
   void selectSubcategory(int subcategoryId) {

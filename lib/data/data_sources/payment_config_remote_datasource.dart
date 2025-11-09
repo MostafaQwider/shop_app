@@ -19,7 +19,7 @@ class PaymentConfigRemoteDateSourceImpl
     try {
       final decodedJson = await _apiService.get(AppApi.paymentConfig);
 
-      if (decodedJson is Map<String, dynamic>) {
+      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
         final  data = decodedJson['data'];
 
         return ApiResponse<PaymentConfigModel>(
@@ -30,7 +30,7 @@ class PaymentConfigRemoteDateSourceImpl
           data: PaymentConfigModel.fromJson(data),
         );
       } else {
-        throw Exception("Invalid response format");
+        throw decodedJson['message'].toString().tr;
       }
     } catch (e) {
       rethrow;
