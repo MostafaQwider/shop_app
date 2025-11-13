@@ -45,4 +45,7 @@ abstract class AuthRepository {
 
   /// تسجيل الخروج
   Future<ApiResponse> logout();
+  Future<bool> isAGuest();
+
+  Future<void> continueAsAGuest();
 }

@@ -18,6 +18,8 @@ abstract class AppStrings {
   static const cancel = 'cancel';
   static const confirm = 'confirm';
   static const areYouSureToDeleteAddress = 'are_you_sure_delete_address';
+  static const areYouSureToChangeLanguage= 'are_you_sure_change_language';
+  static const areYouSureToLogout= 'are_you_sure_logout';
 
   static const changeLanguage = 'change_language';
   static const pickImageGalleryCamera = 'pick_image_camera_gallery';
@@ -27,6 +29,7 @@ abstract class AppStrings {
   // auth strings
   static const login = 'login';
   static const signup = 'sign_up';
+  static const continueAsGuest= 'continue_as_guest_message';
   static const dontHaveAccount = 'dont_have_an_account';
   static const alreadyHaveAccount = 'already_have_an_account';
   static const send = 'send';
@@ -253,4 +256,5 @@ abstract class AppStrings {
   static const refunded = 'refunded';
   static const refundedDescription = 'refunded_description';
   static const noData = 'no_data';
+  static const guestCheckoutLoginRequired = 'guest_checkout_login_required';
 }

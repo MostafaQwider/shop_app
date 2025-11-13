@@ -22,24 +22,20 @@ class CheckoutPage extends StatelessWidget {
             statusRequest:controller.statusRequest ,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(), // 🔹 مهم
-              child: RefreshIndicator(
-                color: Theme.of(context).primaryColor,
-                onRefresh: () => controller.getSavedAddress(),
-                child: Column(
-                  children: [
-                    DeliveryAddressSection(controller: controller),
-                    const SizedBox(height: 20),
-                    ProductInformationSection(controller: controller),
-                    const SizedBox(height: 20),
-                    BillingInformationSection(controller: controller),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: AppButton( text: AppStrings.checkout.tr,onPressed: () => controller.addOrder(),),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  DeliveryAddressSection(controller: controller),
+                  const SizedBox(height: 20),
+                  ProductInformationSection(controller: controller),
+                  const SizedBox(height: 20),
+                  BillingInformationSection(controller: controller),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: AppButton( text: AppStrings.checkout.tr,onPressed: () => controller.addOrder(),),
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
           ),

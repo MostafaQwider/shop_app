@@ -16,6 +16,8 @@ abstract class AppRoutes {
   static const String optionAddressRoute = "/optionAddressRoute";
   static const String checkoutRoute = "/checkoutRoute";
   static const String paymentRoute = "/paymentRoute";
+  static const String payOrderRoute = "/payOrderRoute";
+  static const String paymentSuccessRoute = "/paymentSuccessRoute";
   static const String orderDetailRoute = "/orderDetailRoute";
 
 

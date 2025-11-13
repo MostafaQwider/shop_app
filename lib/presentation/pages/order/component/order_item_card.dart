@@ -58,7 +58,13 @@ class OrderItemCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    Text(
+                      'x ${product.quantity}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
                     Row(
                       children: [
                         const Text("Size: ",
@@ -72,7 +78,7 @@ class OrderItemCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "${product.basePrice.toStringAsFixed(2)} \$",
+                      "${product.basePrice.toStringAsFixed(2)}\$",
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

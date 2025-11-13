@@ -159,6 +159,13 @@ class ApiService {
 
   dynamic _handleResponse(http.Response response) {
     print(response.body);
+
+    // إعادة المحاولة إذا كان السيرفر أعاد خطأ 5xx
+    if (response.statusCode >= 500 && response.statusCode < 600) {
+      throw HttpException(
+          'Server error: ${response.statusCode}, body: ${response.body}');
+    }
+
     try {
       return jsonDecode(response.body);
     } catch (e) {

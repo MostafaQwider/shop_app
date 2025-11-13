@@ -104,7 +104,7 @@ class OptionAddressController extends GetxController {
         buildingNumber: addressType == 0 ? int.parse(buildingNum.text) : null,
         companyNumber: addressType == 2 ? int.parse(buildingNum.text) : null,
         houseNumber: addressType == 1 ? int.parse(buildingNum.text) : null,
-        floor: int.parse(floor.text),
+        floor: addressType != 1?int.parse(floor.text):null,
         companyName: addressType == 2 ? companyName.text  : null);
     var result = await addAddressUseCase(addedAddress);
     result.fold((error) => showToastMessage(label: "", text: error),

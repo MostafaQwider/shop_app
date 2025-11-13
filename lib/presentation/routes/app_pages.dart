@@ -23,9 +23,11 @@ import '../pages/auth/verify_code_page.dart';
 import '../pages/category_detail/category_detail_page.dart';
 import '../pages/checkout/checkout_page.dart';
 import '../pages/checkout/payment_page.dart';
+import '../pages/checkout/payment_success.dart';
 import '../pages/detail/detail_page.dart';
 import '../pages/main_screen.dart';
 import '../pages/onboarding/on_boarding_screen.dart';
+import '../pages/order/component/pay_order_page.dart';
 import '../pages/order/order_detail_page.dart';
 import '../pages/setting/address_page.dart';
 import '../pages/setting/option_address_page.dart';
@@ -97,5 +99,11 @@ class AppPages {
         name: AppRoutes.paymentRoute,
         page: () => const PaymentPage(),
         binding: CheckOutBinding()),
+    GetPage(
+        name: AppRoutes.paymentSuccessRoute,
+        page: () => const PaymentSuccessPage()),
+    GetPage(
+        name: AppRoutes.payOrderRoute,
+        page: () => const PayOrderPage()),
   ];
 }

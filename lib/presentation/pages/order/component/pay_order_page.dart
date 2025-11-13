@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_paypal_payment/flutter_paypal_payment.dart';
-import '../../controllers/checkout/checkout_controller.dart';
+import '../../../controllers/main_screen_pages/order/order_detail_controller.dart';
 
-class PaymentPage extends StatelessWidget {
-  const PaymentPage({super.key});
+class PayOrderPage extends StatelessWidget {
+  const PayOrderPage({super.key});
   @override
   Widget build(BuildContext context) {
     final int orderId=Get.arguments['orderId'];
     return Scaffold(
       body: Center(
-        child: GetBuilder<CheckoutController>(
+        child: GetBuilder<OrderDetailController>(
           builder: (controller) => PaypalCheckoutView(
 
             sandboxMode: controller.paymentConfigEntity.mode == 'sandbox',
@@ -20,7 +20,7 @@ class PaymentPage extends StatelessWidget {
             transactions: [
               {
                 "amount": {
-                  "total": controller.getPriceTotal().toStringAsFixed(2),
+                  "total": controller.orderProductsEntity.order.total,
                   "currency": "USD",
 
                 },

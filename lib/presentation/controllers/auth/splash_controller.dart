@@ -5,7 +5,6 @@ import '../../routes/app_routes.dart';
 import '../../component/app_dialog.dart';
 import 'dart:io';
 
-
 class SplashController extends GetxController {
   final StorageService _storage = StorageService();
 
@@ -24,7 +23,8 @@ class SplashController extends GetxController {
       // ❌ لا يوجد اتصال بالإنترنت، عرض مربع الحوار
       Get.dialog(
         AppDialog(
-          message: "لا يوجد اتصال بالإنترنت.\nيرجى التحقق من الشبكة والمحاولة مرة أخرى.",
+          message:
+              "لا يوجد اتصال بالإنترنت.\nيرجى التحقق من الشبكة والمحاولة مرة أخرى.",
           cancelText: "خروج",
           confirmText: "إعادة المحاولة",
           onCancel: () => exit(0),
@@ -39,14 +39,21 @@ class SplashController extends GetxController {
     }
 
     // ✅ في حال وجود اتصال، أكمل التحقق من حالة المستخدم
-    final bool isLoggedIn = _storage.readTypedData<bool>(key: "isLoggedIn") ?? false;
-    final bool isVerified = _storage.readTypedData<bool>(key: "is_verified") ?? false;
-    final String email = _storage.read(key: "email") ?? "";
+    final bool isLoggedIn =
+        await _storage.readTypedData<bool>(key: "isLoggedIn") ?? false;
+    final bool isVerified =
+        await _storage.readTypedData<bool>(key: "is_verified") ?? false;
+    final String email = await _storage.read(key: "email") ?? "";
+    final bool isGuest = await _storage.read(key: "guest") ?? false;
     final bool isOnBoardingComplete =
-        _storage.readTypedData<bool>(key: "isOnBoardingComplete") ?? false;
+        await _storage.readTypedData<bool>(key: "isOnBoardingComplete") ??
+            false;
 
     if (!isOnBoardingComplete) {
       Get.offAllNamed(AppRoutes.onboardingRoute);
+    } else if (isGuest) {
+      // المستخدم ضيف → دخلو عالرئيسية
+      Get.offAllNamed(AppRoutes.mainScreenRoute);
     } else if (!isLoggedIn) {
       Get.offAllNamed(AppRoutes.loginRoute);
     } else if (!isVerified) {

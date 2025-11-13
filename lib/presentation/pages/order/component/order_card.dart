@@ -27,15 +27,35 @@ class OrderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // التاريخ في الأعلى
-              Align(
-                alignment: Alignment.topRight,
-                child: Text(
-                  order.order.created_at!.split("T")[0],
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      order.order.created_at!.split("T")[0],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Tooltip(
+                      message: "Order ID",
+                      child: Text(
+                        "#${order.order.id}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  )
+
+                ],
               ),
               const SizedBox(height: 10),
 
@@ -136,7 +156,7 @@ class OrderCard extends StatelessWidget {
                         ),
                         // السعر
                         Text(
-                          '\$${product.basePrice.toStringAsFixed(2)}',
+                          '${product.basePrice.toStringAsFixed(2)}\$',
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -160,7 +180,7 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '\$${order.order.total.toStringAsFixed(2)}',
+                    '${order.order.total.toStringAsFixed(2)}\$',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,

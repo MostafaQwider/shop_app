@@ -121,4 +121,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<ApiResponse> verifyResetCode({required String email, required String code})
   => remoteDataSource.verifyResetCode(email: email, code: code);
 
+  @override
+  Future<void> continueAsAGuest()=>remoteDataSource.continueAsAGuest();
+
+  @override
+  Future<bool> isAGuest() =>remoteDataSource.isAGuest();
+
 }

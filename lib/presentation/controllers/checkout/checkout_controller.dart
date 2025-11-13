@@ -23,12 +23,12 @@ class CheckoutController extends GetxController {
   final PaymentConfigUseCase paymentConfigUseCase;
 
   CheckoutController(
-      this.getAddressUseCase,
-      this.addOrderUseCase,
-      this.updateOrderUseCase,
-      this.clearCartUseCase,
-      this.paymentConfigUseCase,
-      );
+    this.getAddressUseCase,
+    this.addOrderUseCase,
+    this.updateOrderUseCase,
+    this.clearCartUseCase,
+    this.paymentConfigUseCase,
+  );
 
   int addressCheckID = 0;
   List<AddressEntity> address = [];
@@ -56,11 +56,16 @@ class CheckoutController extends GetxController {
 
   Future<void> getSavedAddress() async {
     address.clear();
+    statusRequest=StatusRequest.loading;
+    update();
     final result = await getAddressUseCase();
     result.fold((error) => null, (data) => address.addAll(data.data!));
     if (address.isNotEmpty) {
       addressCheckID = address.first.id!;
     }
+    statusRequest=StatusRequest.initial;
+    update();
+
   }
 
   Future<void> getPaymentConfig() async {
@@ -76,6 +81,7 @@ class CheckoutController extends GetxController {
   bool isSelectedAddress(int id) => id == addressCheckID;
 
   double get deliveryFee => 3.00;
+
   double get fax => 2.120;
 
   double getPriceTotal() {
@@ -86,10 +92,10 @@ class CheckoutController extends GetxController {
     return cartItems
         .firstWhere(
           (e) =>
-      e.colorId == p.variants.first.color.id &&
-          e.sizeId == p.variants.first.size.id &&
-          e.productId == p.id,
-    )
+              e.colorId == p.variants.first.color.id &&
+              e.sizeId == p.variants.first.size.id &&
+              e.productId == p.id,
+        )
         .quantity;
   }
 
@@ -100,14 +106,14 @@ class CheckoutController extends GetxController {
 
     final items = cartItems
         .map((e) => OrderItemsEntity(
-      color_id: e.colorId,
-      product_id: e.productId,
-      size_id: e.sizeId,
-      quantity: e.quantity,
-      price: products
-          .firstWhere((element) => element.id == e.productId)
-          .basePrice,
-    ))
+              color_id: e.colorId,
+              product_id: e.productId,
+              size_id: e.sizeId,
+              quantity: e.quantity,
+              price: products
+                  .firstWhere((element) => element.id == e.productId)
+                  .basePrice,
+            ))
         .toList();
 
     final order = OrdersEntity(
@@ -119,36 +125,28 @@ class CheckoutController extends GetxController {
     final result = await addOrderUseCase(order);
 
     result.fold(
-          (error) => showToastMessage(label: '', text: error),
-          (data) async {
+      (error) => showToastMessage(label: '', text: error),
+      (data) async {
         showToastMessage(label: "", text: data.message!);
 
         if (data.status == StatusRequest.success) {
           final orderId = data.data!;
-           await clearCartUseCase();
+          await clearCartUseCase();
+          print(paymentConfigEntity.clientId);
+          print(paymentConfigEntity.secretKey);
 
           /// تنفيذ عملية الدفع مباشرة بدون زر
-          final paymentResult = await Get.toNamed(AppRoutes.paymentRoute);
-
+          final paymentResult = await Get.toNamed(
+            AppRoutes.paymentRoute,
+            arguments: {
+              'orderId': orderId,
+            },
+          );
           // التحقق من نتيجة الدفع وتحديث الطلب
           if (paymentResult != null && paymentResult['status'] == 'success') {
             final transactionId = paymentResult['transactionId'];
-            final updatedOrder = OrdersEntity(
-              id: orderId,
-              address_id: addressCheckID,
-              total: getPriceTotal(),
-              items: items,
-              payment_method: "paypal",
-              payment_transaction_id: transactionId,
-              status: "paid",
-            );
-
-            final updateResult = await updateOrderUseCase(updatedOrder);
-            updateResult.fold(
-                  (error) => showToastMessage(label: "", text: error),
-                  (res) => showToastMessage(
-                  label: "", text: AppStrings.paymantSuccessfully.tr),
-            );
+            updateOrder(orderId, transactionId, items);
+            Get.offNamed(AppRoutes.paymentSuccessRoute);
           } else {
             showToastMessage(
                 label: "Payment Failed",
@@ -160,5 +158,36 @@ class CheckoutController extends GetxController {
 
     statusRequest = StatusRequest.initial;
     update();
+  }
+  List<Map<String, dynamic>> getItems() {
+    return products.map((product) {
+      return {
+        "name": product.productName,
+        "quantity":getQuantity(product),
+        "price": product.basePrice.toStringAsFixed(2),
+        "currency": "USD",
+      };
+    }).toList();
+  }
+  Future<void>updateOrder(orderId,transactionId,items)async{
+    final updatedOrder = OrdersEntity(
+      id: orderId,
+      address_id: addressCheckID,
+      total: getPriceTotal(),
+      items: items,
+      payment_method: "paypal",
+      expected_delivery_time: "Not Assigned",
+      payment_transaction_id: transactionId,
+      status: "paid",
+    );
+
+    final updateResult = await updateOrderUseCase(updatedOrder);
+    updateResult.fold(
+          (error) => showToastMessage(label: "", text: error),
+          (res) {
+        showToastMessage(
+            label: "", text: AppStrings.paymantSuccessfully.tr);
+      },
+    );
   }
 }

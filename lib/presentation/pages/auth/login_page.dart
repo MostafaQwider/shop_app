@@ -27,7 +27,6 @@ class LoginPage extends StatelessWidget {
             builder: (controller) => HandlingData(
               statusRequest: controller.statusRequest,
               child: SingleChildScrollView(
-
                 child: Form(
                   key: controller.formKey,
                   child: Column(
@@ -67,7 +66,9 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 15),
 
                       // Already have an account?
-                      const LoginAction()
+                      LoginAction(
+                        onTap: controller.continueAsAGuest,
+                      )
                     ],
                   ),
                 ),

@@ -77,7 +77,7 @@ class CartItemCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "${product.basePrice.toStringAsFixed(2)} \$",
+                      "${product.basePrice.toStringAsFixed(2)}\$",
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

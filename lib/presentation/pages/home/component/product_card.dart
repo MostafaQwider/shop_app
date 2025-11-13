@@ -60,7 +60,7 @@ class ProductCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '\$${product.basePrice}',
+                          '${product.basePrice}\$',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,

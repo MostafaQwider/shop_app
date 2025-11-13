@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/services/storage_service.dart';
+import '../../../domain/use_cases/auth/is_aguest_usecase.dart';
 import '../../../domain/use_cases/auth/logout_usecase.dart';
 import '../../../domain/use_cases/auth/profile_usecase.dart';
 import '../../../domain/use_cases/language/set_lang_usecase.dart';
@@ -11,18 +12,20 @@ class SettingsController extends GetxController {
   ProfileUseCase profileUseCase;
   LogoutUseCase logoutUseCase;
   SetLangUseCase setLangUseCase;
+  IsAGuestUseCase isAGuestUseCase;
 
-  SettingsController(this.profileUseCase, this.logoutUseCase,this.setLangUseCase);
+  SettingsController(
+      this.profileUseCase, this.logoutUseCase, this.setLangUseCase, this.isAGuestUseCase);
 
   // Observables لإدارة حالة الفتح/الإغلاق لكل قسم
   var isAccountSettingsExpanded = false.obs;
   var isLanguageSettingsExpanded = false.obs;
   StatusRequest statusRequest = StatusRequest.loading;
-  String name = "",
-      email = "";
+  String name = "", email = "";
 
-   StorageService storageService=StorageService();
-   // قائمة اللغات المتاحة (يمكنك توسيعها)
+  StorageService storageService = StorageService();
+
+  // قائمة اللغات المتاحة (يمكنك توسيعها)
   final List<String> availableLanguages = ['ar', 'en', 'de'];
   var selectedLanguage = 'ar'.obs; // اللغة الافتراضية
 
@@ -37,26 +40,33 @@ class SettingsController extends GetxController {
   }
 
   // لتغيير اللغة المحددة
-  void changeLanguage(String langCode) async{
+  void changeLanguage(String langCode) async {
     await setLangUseCase(lang: langCode);
     Get.deleteAll();
     Get.offAllNamed(AppRoutes.splashRoute);
-
   }
 
   @override
-  void onInit() {
+  void onInit() async{
     super.onInit();
-    loadData();
+    if(!await isGuest()){
+    loadData();}
+  }
+  Future<bool>isGuest()async{
+    return await isAGuestUseCase();
   }
 
   Future<void> loadData() async {
+    statusRequest = StatusRequest.loading;
+    update();
+
     final result = await profileUseCase();
-    result.fold((l) => null, (r) {
+    statusRequest = StatusRequest.initial;
+    result.fold((l) => statusRequest = StatusRequest.failure, (r) {
       name = r.data!.name;
       email = r.data!.email;
     });
-    statusRequest = StatusRequest.initial;
+
     update();
   }
 
@@ -64,12 +74,11 @@ class SettingsController extends GetxController {
     statusRequest = StatusRequest.loading;
     update();
     final result = await logoutUseCase();
-    result.fold((l) => showToastMessage(label: '', text: l)
-        , (r) {
-          showToastMessage(label: '', text: r.message ?? "");
-          Get.deleteAll();
-          Get.offAllNamed(AppRoutes.loginRoute);
-        });
+    result.fold((l) => showToastMessage(label: '', text: l), (r) {
+      showToastMessage(label: '', text: r.message ?? "");
+      Get.deleteAll();
+      Get.offAllNamed(AppRoutes.loginRoute);
+    });
     statusRequest = StatusRequest.initial;
     update();
   }

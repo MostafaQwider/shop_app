@@ -33,6 +33,10 @@ abstract class AuthRemoteDataSource {
   Future<ApiResponse<UsersModel>> updateProfile(UsersModel updatedUser);
 
   Future<ApiResponse<String>> logout();
+
+  Future<bool> isAGuest();
+
+  Future<void> continueAsAGuest();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -48,16 +52,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         {'email': email, 'password': password},
       );
 
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+      if (decodedJson is Map<String, dynamic> && decodedJson['success']) {
+        String token = decodedJson['data']['token'] ?? "";
+        bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
+        await _storageService.write(key: "is_verified", value: isVerified);
+        await _storageService.write(key: 'token', value: token);
+        await _storageService.write(
+            key: 'isLoggedIn', value: decodedJson['success']);
+        await _storageService.write(
+            key: 'email', value: decodedJson['data']['user']['email']);
+        await _storageService.write(key: "guest", value: false);
 
-          String token = decodedJson['data']['token'] ?? "";
-          bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
-          await _storageService.write(key: "is_verified", value: isVerified);
-          await _storageService.write(key: 'token', value: token);
-          await _storageService.write(
-              key: 'isLoggedIn', value: decodedJson['success']);
-          await _storageService.write(
-              key: 'email', value: decodedJson['data']['user']['email']);
 
         return ApiResponse<AuthResponseModel>(
           status: decodedJson['success'] == true
@@ -68,7 +73,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               ? AuthResponseModel.fromJson(decodedJson['data'])
               : null,
         );
-
       } else {
         throw decodedJson['message'].toString().tr;
       }
@@ -82,13 +86,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final decodedJson = await _apiService.post(AppApi.signup, user.toJson());
 
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
-          bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
-          await _storageService.write(key: "is_verified", value: isVerified);
-          await _storageService.write(
-              key: 'isLoggedIn', value: decodedJson['success']);
-          await _storageService.write(
-              key: 'email', value: decodedJson['data']['user']['email']);
+      if (decodedJson is Map<String, dynamic> && decodedJson['success']) {
+        bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
+        await _storageService.write(key: "is_verified", value: isVerified);
+        await _storageService.write(
+            key: 'isLoggedIn', value: decodedJson['success']);
+        await _storageService.write(
+            key: 'email', value: decodedJson['data']['user']['email']);
 
 
         return ApiResponse<UsersModel>(
@@ -117,11 +121,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         {'email': email, 'code': code},
       );
 
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
-          String token = decodedJson['data']['token'] ?? "";
-          await _storageService.write(key: 'token', value: token);
-          bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
-          await _storageService.write(key: "is_verified", value: isVerified);
+      if (decodedJson is Map<String, dynamic> && decodedJson['success']) {
+        String token = decodedJson['data']['token'] ?? "";
+        await _storageService.write(key: 'token', value: token);
+        bool isVerified = decodedJson['data']['user']['is_verified'] ?? false;
+        await _storageService.write(key: "is_verified", value: isVerified);
+        await _storageService.write(key: "guest", value: false);
+
 
         return ApiResponse<AuthResponseModel>(
           status: decodedJson['success'] == true
@@ -219,7 +225,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final decodedJson = await _apiService.get(AppApi.profile);
 
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+      if (decodedJson is Map<String, dynamic> && decodedJson['success']) {
         return ApiResponse<UsersModel>(
           status: decodedJson['success'] == true
               ? StatusRequest.success
@@ -265,9 +271,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<ApiResponse<String>> logout() async {
     try {
       await _storageService.remove(key: 'token');
+      await _storageService.remove(key: 'guest');
       return ApiResponse<String>(
         status: StatusRequest.success,
-        message:"Logged out successfully".tr,
+        message: "Logged out successfully".tr,
         data: '',
       );
     } catch (e) {
@@ -283,7 +290,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         AppApi.verifyResetCode,
         {'email': email, 'code': code},
       );
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+      if (decodedJson is Map<String, dynamic> && decodedJson['success']) {
         return ApiResponse(
             status: decodedJson['success'] == true
                 ? StatusRequest.success
@@ -295,5 +302,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @override
+  Future<void> continueAsAGuest() async {
+    await _storageService.write(key: "guest", value: true);
+  }
+
+  @override
+  Future<bool> isAGuest() async {
+    return await _storageService.read(key: "guest") ?? false;
   }
 }

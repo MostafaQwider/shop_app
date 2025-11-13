@@ -3,6 +3,7 @@ import '../../../core/constants/enums.dart';
 import '../../../domain/entities/cart_item_entity.dart';
 import '../../../domain/entities/product_variants_entity.dart';
 import '../../../domain/entities/products_entity.dart';
+import '../../../domain/use_cases/auth/is_aguest_usecase.dart';
 import '../../../domain/use_cases/cart/add_to_cart_usecase.dart';
 import '../../../domain/use_cases/cart/clear_cart_usecase.dart';
 import '../../../domain/use_cases/cart/get_cart_usecase.dart';
@@ -17,6 +18,7 @@ class CartController extends GetxController {
   final ClearCartUseCase clearCartUseCase;
   final ProductLocalUseCase productLocalUseCase;
   final MinesQuantityCartUseCase minesQuantityCartUseCase;
+  final IsAGuestUseCase isAGuestUseCase;
 
   CartController(
     this.getCartItemsUseCase,
@@ -25,6 +27,7 @@ class CartController extends GetxController {
     this.clearCartUseCase,
     this.productLocalUseCase,
     this.minesQuantityCartUseCase,
+    this.isAGuestUseCase,
   );
 
   /// 🔁 الحالة العامة (تحميل، نجاح، خطأ)
@@ -77,7 +80,9 @@ class CartController extends GetxController {
     statusRequest = hasError ? StatusRequest.loading :cartProducts.isEmpty?StatusRequest.nodata: StatusRequest.initial;
     update();
   }
-
+  Future<bool>isGuest()async{
+    return await isAGuestUseCase();
+  }
   /// 🔗 تصفية المنتجات لتشمل فقط عناصر السلة
   void applyCartFilter() {
     cartProducts.clear();

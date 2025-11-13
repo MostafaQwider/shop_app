@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/enums.dart';
+import '../../../domain/use_cases/auth/continue_as_aguest_usecase.dart';
 import '../../../domain/use_cases/auth/login_usecase.dart';
 import '../../../domain/use_cases/auth/send_verify_code_usecase.dart';
 import '../../component/app_snack_bar.dart';
@@ -9,8 +10,9 @@ import '../../routes/app_routes.dart';
 class LoginController extends GetxController {
   final LoginUseCase loginUseCase;
   final SendVerifyCodeUseCase sendVerifyCodeUseCase;
+  final ContinueAsAGuestUseCase continueAsAGuestUseCase;
 
-  LoginController(this.loginUseCase, this.sendVerifyCodeUseCase);
+  LoginController(this.loginUseCase, this.continueAsAGuestUseCase, this.sendVerifyCodeUseCase);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late TextEditingController emailController;
@@ -63,6 +65,11 @@ class LoginController extends GetxController {
   void goToSignUp() {
     Get.offNamed(AppRoutes.signupRoute);
   }
+  Future<void> continueAsAGuest() async{
+    await continueAsAGuestUseCase();
+    Get.offNamed(AppRoutes.mainScreenRoute);
+  }
+
 
   @override
   void onInit() {

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/strings.dart';
 import '../../component/app_button.dart';
+import '../../component/app_dialog.dart';
 import '../../component/handling_data.dart';
 import '../../controllers/main_screen_pages/cart_controller.dart';
 import '../../routes/app_routes.dart';
@@ -75,13 +76,29 @@ class CartPage extends StatelessWidget {
                   color: Colors.transparent,
                   child: AppButton(
                     text: AppStrings.checkout.tr,
-                    onPressed: () =>
-                        Get.toNamed(AppRoutes.checkoutRoute, arguments: {
-                      "product": controller.cartProducts,
-                      "cartItems": controller.cartItems,
-                      "subTotal": controller.totalPrice
-                    }),
-                  ),
+                    onPressed: () async{
+                      if(!await controller.isGuest()){
+                            Get.toNamed(AppRoutes.checkoutRoute, arguments: {
+                              "product": controller.cartProducts,
+                              "cartItems": controller.cartItems,
+                              "subTotal": controller.totalPrice
+                            });}
+                      else{
+                        Get.dialog(
+                          AppDialog(
+                            message: AppStrings.guestCheckoutLoginRequired.tr,
+                            cancelText: AppStrings.cancel.tr,
+                            confirmText: AppStrings.login.tr,
+                            onCancel: () => Get.back(),
+                            onConfirm: () {
+                              Get.back();
+                              Get.offAllNamed(AppRoutes.loginRoute);
+                            },
+                          ),
+                          barrierDismissible: false,
+                        );
+                      }
+                          }),
                 ),
               ],
             ),

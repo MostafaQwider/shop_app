@@ -7,6 +7,7 @@ import '../../../../domain/entities/orders_entity.dart';
 import '../../../../domain/entities/product_variants_entity.dart';
 import '../../../../domain/entities/products_entity.dart';
 import '../../../../domain/use_cases/address/get_address_usecase.dart';
+import '../../../../domain/use_cases/auth/is_aguest_usecase.dart';
 import '../../../../domain/use_cases/orders/get_orders_usecase.dart';
 import '../../../../domain/use_cases/orders/remove_orders_usecase.dart';
 import '../../../../domain/use_cases/product/product_local_usecase.dart';
@@ -28,12 +29,14 @@ class OrderController extends GetxController {
   final GetOrderUseCase orderUseCase;
   final RemoveOrderUseCase removeOrderUseCase;
   final GetAddressUseCase getAddressUseCase;
+  final IsAGuestUseCase isAGuestUseCase ;
 
   OrderController(
     this.orderUseCase,
     this.productUseCase,
     this.getAddressUseCase,
     this.removeOrderUseCase,
+    this.isAGuestUseCase,
   );
 
   StatusRequest statusRequest = StatusRequest.loading;
@@ -64,9 +67,17 @@ class OrderController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    await loadData();
+    if(!await isGuest()){
+    await loadData();}
+    else {
+      statusRequest = StatusRequest.nodata;
+      update();
+    }
   }
 
+  Future<bool>isGuest()async{
+    return await isAGuestUseCase();
+  }
   Future<void> loadData() async {
     statusRequest = StatusRequest.loading;
     update();
@@ -82,8 +93,14 @@ class OrderController extends GetxController {
     final addressResult = await getAddressUseCase();
 
     productResult.fold((l) => hasError=true, (r) => products.addAll(r.data ?? []));
-    orderResult.fold((l) => hasError=true, (r) => orders.addAll(r.data ?? []));
-    addressResult.fold((l) => hasError=true, (r) => address.addAll(r.data ?? []));
+    orderResult.fold((l) { hasError=true;
+      print("order error");
+      }, (r) => orders.addAll(r.data ?? []));
+    addressResult.fold((l) {
+      hasError = true;
+      print("address error");
+
+    }, (r) => address.addAll(r.data ?? []));
 
     filteredOrder = List.from(orders);
     checkData();
