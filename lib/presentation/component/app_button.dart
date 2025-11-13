@@ -34,6 +34,7 @@ class AppButton extends StatelessWidget {
           style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onPrimary, // لضمان التباين الجيد
+            fontSize: 14
           ),
         ),
       ),

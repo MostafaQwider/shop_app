@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shopingo/domain/use_cases/language/get_lang_usecase.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../domain/use_cases/auth/is_aguest_usecase.dart';
@@ -12,10 +14,11 @@ class SettingsController extends GetxController {
   ProfileUseCase profileUseCase;
   LogoutUseCase logoutUseCase;
   SetLangUseCase setLangUseCase;
+  GetLangUseCase getLangUseCase;
   IsAGuestUseCase isAGuestUseCase;
 
   SettingsController(
-      this.profileUseCase, this.logoutUseCase, this.setLangUseCase, this.isAGuestUseCase);
+      this.profileUseCase,this.getLangUseCase, this.logoutUseCase, this.setLangUseCase, this.isAGuestUseCase);
 
   // Observables لإدارة حالة الفتح/الإغلاق لكل قسم
   var isAccountSettingsExpanded = false.obs;
@@ -42,6 +45,7 @@ class SettingsController extends GetxController {
   // لتغيير اللغة المحددة
   void changeLanguage(String langCode) async {
     await setLangUseCase(lang: langCode);
+    Get.updateLocale(Locale(langCode));
     Get.deleteAll();
     Get.offAllNamed(AppRoutes.splashRoute);
   }
@@ -49,14 +53,20 @@ class SettingsController extends GetxController {
   @override
   void onInit() async{
     super.onInit();
+    print(await isGuest());
     if(!await isGuest()){
     loadData();}
+    statusRequest=StatusRequest.initial;
+    update();
+    selectedLanguage.value=await getLangUseCase();
+
   }
   Future<bool>isGuest()async{
     return await isAGuestUseCase();
   }
 
   Future<void> loadData() async {
+
     statusRequest = StatusRequest.loading;
     update();
 

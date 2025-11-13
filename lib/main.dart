@@ -6,20 +6,15 @@ import 'core/translations/my_translations.dart';
 import 'presentation/bindings/app_binding.dart';
 import 'presentation/routes/app_pages.dart';
 import 'presentation/routes/app_routes.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await StorageService().init();
   await MyTranslations.loadTranslations();
 
-  // قراءة اللغة من التخزين
   final storedLang = await StorageService().read(key: "lang");
-  Locale initialLocale;
-  if (storedLang != null && storedLang.isNotEmpty) {
-    initialLocale = Locale(storedLang); // مثلا 'en' أو 'ar'
-  } else {
-    initialLocale = Get.deviceLocale ?? const Locale('en');
-  }
+  Locale initialLocale = (storedLang != null && storedLang.isNotEmpty)
+      ? Locale(storedLang)
+      : Get.deviceLocale ?? const Locale('en');
 
   runApp(ShopingoApp(initialLocale: initialLocale));
 }
@@ -45,4 +40,5 @@ class ShopingoApp extends StatelessWidget {
     );
   }
 }
+
 

@@ -11,6 +11,7 @@ import '../../domain/use_cases/cart/remove_cart_item_usecase.dart';
 import '../../domain/use_cases/favorite/get_favorites_usecase.dart';
 import '../../domain/use_cases/home/category_usecase.dart';
 import '../../domain/use_cases/home/product_usecase.dart';
+import '../../domain/use_cases/language/get_lang_usecase.dart';
 import '../../domain/use_cases/language/set_lang_usecase.dart';
 import '../../domain/use_cases/orders/get_orders_usecase.dart';
 import '../../domain/use_cases/orders/remove_orders_usecase.dart';
@@ -41,6 +42,7 @@ class MainScreenBinding extends Bindings {
     Get.lazyPut(() => LogoutUseCase(Get.find()), fenix: true);
     Get.lazyPut(() => ClearCartUseCase(Get.find()), fenix: true);
     Get.lazyPut(() => SetLangUseCase(Get.find()), fenix: true);
+    Get.lazyPut(() => GetLangUseCase(Get.find()), fenix: true);
     Get.lazyPut(() => IsAGuestUseCase(Get.find()), fenix: true);
 
     Get.lazyPut(() => FavoriteController(Get.find(), Get.find(), Get.find()),
@@ -57,7 +59,7 @@ class MainScreenBinding extends Bindings {
         () => OrderController(Get.find(), Get.find(),Get.find(), Get.find(), Get.find()),
         fenix: true);
     Get.lazyPut(
-            () => SettingsController(Get.find(),Get.find(),Get.find(),Get.find()),
+            () => SettingsController(Get.find(),Get.find(),Get.find(),Get.find(),Get.find()),
         fenix: true);
   }
 }

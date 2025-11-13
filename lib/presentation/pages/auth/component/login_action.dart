@@ -32,12 +32,13 @@ class LoginAction extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 8,),
+        SizedBox(height: 18,),
         GestureDetector(
           onTap: onTap,
           child: Text(
+            textAlign: TextAlign.center,
             AppStrings.continueAsGuest.tr,
-            style: Theme.of(context).textTheme.displaySmall
+            style: Theme.of(context).textTheme.bodySmall
           ),
         ),
       ],
