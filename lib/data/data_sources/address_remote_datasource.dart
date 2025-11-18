@@ -92,7 +92,9 @@ class AddressRemoteDataSourceImpl implements AddressRemoteDataSource {
     try {
       final decodedJson = await _apiService.get(AppApi.addressForUser);
 
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+      if (decodedJson is Map<String, dynamic>&&
+          decodedJson.containsKey('success') &&
+          decodedJson['success'] == true ) {
         final List dataList = decodedJson['data'] ?? [];
         _storageService.write(key: "addresses", value: jsonEncode(decodedJson));
 

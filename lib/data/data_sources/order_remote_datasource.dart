@@ -29,7 +29,9 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         model.toJson(),
       );
 
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+      if (decodedJson is Map<String, dynamic>&&
+          decodedJson.containsKey('success') &&
+          decodedJson['success'] == true ) {
 
 
         return ApiResponse(
@@ -92,7 +94,9 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
     try {
       final decodedJson = await _apiService.get(AppApi.orderForUser); // افترض وجود AppApi.getOrders
 
-      if (decodedJson is Map<String, dynamic>&&decodedJson['success'] ) {
+      if (decodedJson is Map<String, dynamic>&&
+          decodedJson.containsKey('success') &&
+          decodedJson['success'] == true) {
         final List dataList = decodedJson['data'] ?? [];
         // اختياري: تخزين الأوامر في التخزين المحلي، كما حدث مع العناوين
         _storageService.write(key: "orders", value: jsonEncode(decodedJson));

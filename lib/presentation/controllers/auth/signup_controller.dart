@@ -50,10 +50,11 @@ class SignupController extends GetxController {
         showToastMessage(
             text: user.message ?? "user signup successfully", label: '');
         if(user.status==StatusRequest.success){
-          Get.offNamed(AppRoutes.verifyCodeRoute,arguments:{
-            "type":"register",
-            "email":emailController.text.trim()
-          });
+          // Get.offNamed(AppRoutes.verifyCodeRoute,arguments:{
+          //   "type":"register",
+          //   "email":emailController.text.trim()
+          // });
+          Get.offAllNamed(AppRoutes.mainScreenRoute);
         }
       },
     );

@@ -44,8 +44,8 @@ class LoginController extends GetxController {
       }, (user) async {
         showToastMessage(
             text: user.message ?? "user login successfully", label: '');
-        print(user.data!.user.isVerified);
-        if (!user.data!.user.isVerified!) {
+        //if (!user.data!.user.isVerified!) {
+        if (false) {
           final sendResult = await sendVerifyCodeUseCase(
               email: emailController.text);
           sendResult.fold((l) => null, (r) =>

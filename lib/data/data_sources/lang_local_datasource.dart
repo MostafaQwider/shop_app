@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 import '../../core/services/storage_service.dart';
 
 abstract class LangLocalDataSource {
@@ -11,8 +13,8 @@ class LangLocalDataSourceImpl implements LangLocalDataSource {
 
   @override
   Future<String> getLang() async {
-    return await _storageService.read(key: "lang");
-  }
+    final stored = await _storageService.read(key: "lang");
+    return stored ?? Get.deviceLocale?.languageCode ?? 'en';  }
 
   @override
   Future<void> setLang({required String lang}) async {

@@ -53,11 +53,15 @@ class SettingsController extends GetxController {
   @override
   void onInit() async{
     super.onInit();
-    print(await isGuest());
+
     if(!await isGuest()){
-    loadData();}
-    statusRequest=StatusRequest.initial;
-    update();
+    loadData();
+
+    }else{
+      statusRequest=StatusRequest.initial;
+      update();
+    }
+
     selectedLanguage.value=await getLangUseCase();
 
   }

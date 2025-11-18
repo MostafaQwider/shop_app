@@ -30,7 +30,7 @@ class CheckoutController extends GetxController {
     this.paymentConfigUseCase,
   );
 
-  int addressCheckID = 0;
+  int addressCheckID = -1;
   List<AddressEntity> address = [];
   List<ProductEntity> products = [];
   List<CartItemEntity> cartItems = [];
@@ -101,6 +101,10 @@ class CheckoutController extends GetxController {
 
   /// إنشاء الطلب وتنفيذ الدفع
   Future<void> addOrder() async {
+    if(addressCheckID==-1){
+      showToastMessage(label: "", text: AppStrings.youMustHaveAtLeastOneAddress.tr);
+      return;
+    }
     statusRequest = StatusRequest.loading;
     update();
 

@@ -1,12 +1,12 @@
-import 'dart:io';
+import 'package:http/http.dart' as http;
 
-checkInternetConnection() async {
+Future<bool> checkInternetConnection() async {
   try {
-    var result = await InternetAddress.lookup("google.com");
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      return true;
-    }
-  }on SocketException catch (_) {
+    final response = await http.get(Uri.parse('https://www.google.com'))
+        .timeout(Duration(seconds: 5));
+    if (response.statusCode == 200) return true;
+    return false;
+  } catch (_) {
     return false;
   }
 }

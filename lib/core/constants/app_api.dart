@@ -1,9 +1,9 @@
 class AppApi {
   static const String imageUrl =
-      "Base_url_of_your_server/uploads/";
+      "base_url/uploads/";
 
   static const String server =
-      'Base_url_of_your_server/api/v1';
+      'base_url/api/v1';
 
 // ================================= AUTH ========================== //
 

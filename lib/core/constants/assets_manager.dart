@@ -4,6 +4,7 @@ class AssetsManager {
   static const String rootLottie = "assets/lottie";
 
   static const appIcon = "$rootIcons/app_icon.svg";
+  static const appIconPng = "$rootImages/app_icon.png";
   static const onBoarding1 = '$rootIcons/on_boarding1.svg';
   static const onBoarding2 = '$rootIcons/on_boarding2.svg';
   static const onBoarding3 = '$rootIcons/on_boarding3.svg';

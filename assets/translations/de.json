@@ -304,8 +304,11 @@
   "guest_checkout_login_required": "Sie müssen sich anmelden, um den Kauf abzuschließen.\nMöchten Sie zur Anmeldeseite wechseln?",
   "are_you_sure_change_language": "Sind Sie sicher, dass Sie die Sprache ändern möchten?",
   "are_you_sure_logout": "Sind Sie sicher, dass Sie sich abmelden möchten?",
-  "continue_as_guest_message": "Du kannst als Gast weitermachen, aber einige Funktionen könnten eingeschränkt sein."
-
+  "continue_as_guest_message": "Du kannst als Gast weitermachen, aber einige Funktionen könnten eingeschränkt sein.",
+  "no_internet": "Keine Internetverbindung.",
+  "check_network": "Bitte überprüfen Sie Ihr Netzwerk und versuchen Sie es erneut.",
+  "exit": "Beenden",
+  "retry": "Erneut versuchen"
 
 
 }

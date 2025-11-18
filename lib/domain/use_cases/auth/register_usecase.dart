@@ -1,4 +1,5 @@
 import '../../../data/models/api_response.dart';
+import '../../entities/auth_response.dart';
 import '../../entities/users_entity.dart';
 import 'package:dartz/dartz.dart';
 import '../../repositories/auth_repository.dart';
@@ -7,7 +8,7 @@ class RegisterUseCase {
   final AuthRepository repository;
   RegisterUseCase(this.repository);
 
-  Future<Either<String, ApiResponse<UsersEntity>>> call({
+  Future<Either<String, ApiResponse<AuthResponse>>> call({
     required UsersEntity user,
   }) async {
     try {

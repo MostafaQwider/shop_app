@@ -7,7 +7,7 @@ abstract class AuthRepository {
   Future<ApiResponse<AuthResponse>> login(String email, String password);
 
   /// إنشاء حساب جديد (name + email + password)
-  Future<ApiResponse<UsersEntity>> register(UsersEntity user);
+  Future<ApiResponse<AuthResponse>> register(UsersEntity user);
 
   /// تفعيل الحساب بعد التسجيل (email + code)
   Future<ApiResponse<AuthResponse>> verifyAccount({

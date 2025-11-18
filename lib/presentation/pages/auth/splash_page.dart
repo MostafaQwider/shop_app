@@ -13,12 +13,15 @@ class SplashPage extends StatelessWidget {
     Get.put(SplashController());
 
     return Scaffold(
-      body: Container(
-        width: Get.width,
-        height: Get.height,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(10),
-        child:SvgPicture.asset(AssetsManager.appIcon)
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(
+        child: Center(
+          child: SvgPicture.asset(
+            AssetsManager.appIcon,
+            width: 150,
+            height: 150,
+          ),
+        ),
       ),
     );
   }

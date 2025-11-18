@@ -38,22 +38,22 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 30),
 
                       LoginForm(controller: controller),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.forgetPasswordRoute);
-                          },
-                          child: Text(
-                            AppStrings.forgetPassword.tr,
-                            style: TextStyle(
-                              color: theme.primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
+                      // Align(
+                      //   alignment: Alignment.centerRight,
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       Get.toNamed(AppRoutes.forgetPasswordRoute);
+                      //     },
+                      //     child: Text(
+                      //       AppStrings.forgetPassword.tr,
+                      //       style: TextStyle(
+                      //         color: theme.primaryColor,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                     // const SizedBox(height: 20),
 
                       const SizedBox(height: 20),
 

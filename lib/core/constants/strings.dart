@@ -16,6 +16,10 @@ abstract class AppStrings {
   static const submitRating = 'submit_rating';
 
   static const cancel = 'cancel';
+  static const exit = 'exit';
+  static const retry = 'retry';
+  static const checkNetwork = 'check_network';
+  static const noInternet = 'no_internet';
   static const confirm = 'confirm';
   static const areYouSureToDeleteAddress = 'are_you_sure_delete_address';
   static const areYouSureToChangeLanguage= 'are_you_sure_change_language';

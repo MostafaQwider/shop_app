@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../../core/constants/strings.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/utils/check_internet_connection.dart';
 import '../../routes/app_routes.dart';
@@ -24,9 +25,9 @@ class SplashController extends GetxController {
       Get.dialog(
         AppDialog(
           message:
-              "لا يوجد اتصال بالإنترنت.\nيرجى التحقق من الشبكة والمحاولة مرة أخرى.",
-          cancelText: "خروج",
-          confirmText: "إعادة المحاولة",
+              "${AppStrings.noInternet.tr}\n${AppStrings.checkNetwork.tr}",
+          cancelText: AppStrings.exit.tr,
+          confirmText: AppStrings.retry.tr,
           onCancel: () => exit(0),
           onConfirm: () async {
             Get.back();

@@ -304,8 +304,11 @@
   "guest_checkout_login_required": "You need to log in to complete the purchase.\nDo you want to go to the login page?",
   "are_you_sure_change_language": "Are you sure you want to change the language?",
   "are_you_sure_logout": "Are you sure you want to log out?",
-  "continue_as_guest_message": "You can continue as a guest, but some features may be limited."
-
+  "continue_as_guest_message": "You can continue as a guest, but some features may be limited.",
+  "no_internet": "No internet connection.",
+  "check_network": "Please check your network and try again.",
+  "exit": "Cancel",
+  "retry": "Retry"
 
 
 }

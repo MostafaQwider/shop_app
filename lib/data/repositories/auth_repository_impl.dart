@@ -29,18 +29,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<ApiResponse<UsersEntity>> register(UsersEntity user) async {
+  Future<ApiResponse<AuthResponse>> register(UsersEntity user) async {
     final userModel = UsersModel.fromEntity(user);
     final responseModel = await remoteDataSource.register(userModel);
 
     if (responseModel.data != null) {
-      return ApiResponse<UsersEntity>(
+      return ApiResponse<AuthResponse>(
         status: responseModel.status,
         data: responseModel.data!.toEntity(),
         message: responseModel.message,
       );
     } else {
-      return ApiResponse<UsersEntity>(
+      return ApiResponse<AuthResponse>(
         status: responseModel.status,
         message: responseModel.message,
       );
