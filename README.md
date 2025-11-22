@@ -1,4 +1,4 @@
-![image1(3)](https://github.com/user-attachments/assets/c5efccb7-c72b-4e2d-80c9-5a8ee071a05f)![image5(2)](https://github.com/user-attachments/assets/de4232e7-564d-4ff1-99f7-ffd0fe5fe8b6)![image1(3)](https://github.com/user-attachments/assets/c30762b6-26f1-4aa4-94f6-9dd44f30cf98)# Shop App - Flutter E-commerce Application
+# Shop App - Flutter E-commerce Application
 
 **Shop App** is a Flutter e-commerce application built with **GetX**, designed for selling clothing. The app supports **three languages**: English, Arabic, and German, and includes a **full authentication system** (sign up, login, account verification, password reset, password change).
 
